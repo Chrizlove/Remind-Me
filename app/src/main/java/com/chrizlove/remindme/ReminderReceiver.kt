@@ -15,17 +15,6 @@ class ReminderReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
 
         val i = Intent(context, MainActivity::class.java)
-            i.putExtra("title",intent?.getStringExtra("title"))
-            i.putExtra("desc",intent?.getStringExtra("desc"))
-            i.putExtra("minute",intent?.getStringExtra("minute"))
-            i.putExtra("hour",intent?.getStringExtra("hour"))
-            i.putExtra("day",intent?.getStringExtra("day"))
-            i.putExtra("month",intent?.getStringExtra("month"))
-            i.putExtra("year",intent?.getStringExtra("year"))
-            i.putExtra("time",intent?.getIntExtra("time",0))
-            i.addFlags(
-                Intent.FLAG_ACTIVITY_NEW_TASK or
-                        Intent.FLAG_ACTIVITY_SINGLE_TOP)
         intent!!.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         val pendingIntent = PendingIntent.getActivity(context,0,i,PendingIntent.FLAG_UPDATE_CURRENT)
 
@@ -41,13 +30,6 @@ class ReminderReceiver : BroadcastReceiver() {
 
         val notificationManager = NotificationManagerCompat.from(context)
         notificationManager.notify(123,notificationBuilder.build())
-
-
-        //reminderViewModel.delete(
-              //  Reminder(intent.getStringExtra("title")!!,intent.getStringExtra("desc")!!,
-             //   intent.getStringExtra("minute")!!,intent.getStringExtra("hour")!!,intent.getStringExtra("day")!!,
-             //   intent.getStringExtra("month")!!, intent.getStringExtra("year")!!
-             //
     }
 
 }

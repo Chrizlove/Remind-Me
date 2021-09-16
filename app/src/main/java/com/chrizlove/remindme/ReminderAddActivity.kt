@@ -74,10 +74,9 @@ class ReminderAddActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListe
     override fun onTimeSet(p0: TimePicker?, p1: Int, p2: Int) {
         savedHour=p1
         savedMinute=p2
+
             //taking the current time of making reminder
         timecurrent = Calendar.getInstance().timeInMillis.toInt()
-
-        reminderViewModel.insert(Reminder(newReminderTitle.text.toString(),newReminderDesc.text.toString(),savedMinute.toString(),savedHour.toString(),savedDay.toString(),savedMonth.toString(),savedYear.toString(),timecurrent))
 
         //creating a time variable calendar for the time user inputted
         calender = Calendar.getInstance()
@@ -86,6 +85,8 @@ class ReminderAddActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListe
         calender[Calendar.DAY_OF_MONTH] = savedDay
         calender[Calendar.MONTH]= savedMonth
         calender[Calendar.YEAR]= savedYear
+
+        reminderViewModel.insert(Reminder(newReminderTitle.text.toString(),newReminderDesc.text.toString(),savedMinute.toString(),savedHour.toString(),savedDay.toString(),savedMonth.toString(),savedYear.toString(),timecurrent,calender.timeInMillis.toString(),false))
 
         //creating notification
         createNotificationChannel()
@@ -101,12 +102,6 @@ class ReminderAddActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListe
         val  intent = Intent(this, ReminderReceiver::class.java)
         intent.putExtra("title",newReminderTitle.text.toString())
         intent.putExtra("desc",newReminderDesc.text.toString())
-        intent.putExtra("minute",savedMinute.toString())
-        intent.putExtra("hour",savedHour.toString())
-        intent.putExtra("day",savedDay.toString())
-        intent.putExtra("month",savedMonth.toString())
-        intent.putExtra("year",savedYear.toString())
-        intent.putExtra("time",timecurrent)
         pendingIntent = PendingIntent.getBroadcast(this,timecurrent,intent,0)
         reminderManager.setExact(
             AlarmManager.RTC_WAKEUP,time,pendingIntent

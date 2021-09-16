@@ -13,7 +13,9 @@ data class Reminder( @ColumnInfo(name="reminderTitle")val title: String,
                     @ColumnInfo(name="reminderDay")val day: String,
                     @ColumnInfo(name="reminderMonth")val month: String,
                     @ColumnInfo(name="reminderYear")val year: String,
-                    @ColumnInfo(name="timeDuringSet")val time: Int){
+                    @ColumnInfo(name="timeDuringSet")val time: Int,
+                    @ColumnInfo(name="timeSetInMillis")val timeInMillis: String,
+                    @ColumnInfo(name="reminded")var reminded: Boolean){
     @PrimaryKey(autoGenerate = true) var id=0
 }
 

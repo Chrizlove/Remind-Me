@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -18,6 +19,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.chrizlove.remindme.databinding.ActivityMainBinding
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
     private lateinit var pendingIntent: PendingIntent
@@ -25,6 +28,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var reminderViewModel: ReminderViewModel
     private lateinit var binding: ActivityMainBinding
     private lateinit var reminderManager: AlarmManager
+    var day=0
+    var hour=0
+    var minute=0
+    var year=0
+    var month=0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +54,7 @@ class MainActivity : AppCompatActivity() {
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         ).get(ReminderViewModel::class.java)
+
         reminderViewModel.reminderdata.observe(this, Observer {
 
             //change visibility of no reminders yet textview
@@ -57,48 +66,27 @@ class MainActivity : AppCompatActivity() {
                 noReminder.visibility = View.INVISIBLE
             }
 
+            //updating the reminder database if the time for reminder has passed
+            updateReminderDataBase()
+
             //updating the recyclerview on any change
         reminderAdapter.updateReminders(it)
         })
 
         //swipe to delete functionality
         swipeRightToDelete()
-
-        //checking for recieved intents
-        if(intent!=null)
-        {
-            Log.d("time",intent.getIntExtra("time",0).toString())
-            reminderViewModel.delete(
-                Reminder(
-                    intent.getStringExtra("title").toString(),intent.getStringExtra("desc").toString(),
-                    intent.getStringExtra("minute").toString(),intent.getStringExtra("hour").toString(),intent.getStringExtra("day").toString(),
-                    intent.getStringExtra("month").toString(), intent.getStringExtra("year").toString(),intent.getIntExtra("time",0)))
-        }
     }
 
-    //not used
-    private fun setReminder(time: Long) {
-        reminderManager = getSystemService(ALARM_SERVICE) as AlarmManager
-
-        val  intent = Intent(this, ReminderReceiver::class.java)
-
-        pendingIntent = PendingIntent.getBroadcast(this,0,intent,0)
-        reminderManager.set(
-                AlarmManager.RTC_WAKEUP,time,pendingIntent
-        )
-    }
-
-    //not used
-    private fun createNotificationChannel() {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+    private fun updateReminderDataBase() {
+        val reminderlist = arrayListOf<Reminder>()
+        reminderViewModel.reminderdata.value?.let { reminderlist.addAll(it) }
+        for(reminder in reminderlist)
         {
-            val name: CharSequence = "ChrizloveReminderChannel"
-            val description = "Channel for Reminders"
-            val importance = NotificationManager.IMPORTANCE_HIGH
-            val channel = NotificationChannel("Chrizlove",name,importance)
-            channel.description = description
-            val notificationManager = getSystemService(NotificationManager::class.java)
-            notificationManager.createNotificationChannel(channel)
+
+            if(reminder.timeInMillis.toLong()<Calendar.getInstance().timeInMillis)
+            {
+                reminder.reminded = true
+            }
         }
     }
 
@@ -122,7 +110,6 @@ class MainActivity : AppCompatActivity() {
 
             }
         }
-
         val itemTouchHelper = ItemTouchHelper(item)
         itemTouchHelper.attachToRecyclerView(remindersRecyclerView)
     }
@@ -134,5 +121,13 @@ class MainActivity : AppCompatActivity() {
         reminderManager.cancel(pendingIntent)
     }
 
+    private fun getDateTimeCalendar() {
+        val cal = Calendar.getInstance()
+        day=cal.get(Calendar.DAY_OF_MONTH)
+        month=cal.get(Calendar.MONTH)
+        year=cal.get(Calendar.YEAR)
+        hour=cal.get(Calendar.HOUR)
+        minute=cal.get(Calendar.MINUTE)
+    }
 
 }

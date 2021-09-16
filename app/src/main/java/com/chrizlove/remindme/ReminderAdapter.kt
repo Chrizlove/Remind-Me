@@ -25,7 +25,13 @@ class ReminderAdapter(private val context: Context): RecyclerView.Adapter<Remind
     override fun onBindViewHolder(holder: ReminderViewHolder, position: Int) {
         val currentReminder = reminderList[position]
         holder?.reminderTitleAD.text = currentReminder.title
-        holder?.reminderTimeAD.text = "Set For - ${currentReminder.hour}:${currentReminder.minute}, ${currentReminder.day}/${currentReminder.month}/${currentReminder.year}"
+        if (currentReminder.reminded == false) {
+            holder?.reminderTimeAD.text =
+                "Set For - ${currentReminder.hour}:${currentReminder.minute}, ${currentReminder.day}/${currentReminder.month}/${currentReminder.year}"
+        }
+        else{
+            holder?.reminderTimeAD.text = "Reminded"
+        }
     }
     fun updateReminders(newReminders: List<Reminder>)
     {
