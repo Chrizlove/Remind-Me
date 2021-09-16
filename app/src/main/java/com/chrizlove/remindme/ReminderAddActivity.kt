@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.DatePicker
 import android.widget.TimePicker
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.activity_reminder_add.*
 import java.util.*
@@ -32,9 +33,16 @@ class ReminderAddActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reminder_add)
-        saveReminderButton.setOnClickListener {
-            getDateTime()
+            saveReminderButton.setOnClickListener {
+
+                if(newReminderTitle.text.isNotEmpty()) {
+                getDateTime()
+                }
+                else{
+                    Toast.makeText(this,"A Title is required", Toast.LENGTH_SHORT).show()
+                }
         }
+
         reminderViewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)

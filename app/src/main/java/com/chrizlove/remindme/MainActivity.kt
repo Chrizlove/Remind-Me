@@ -37,12 +37,6 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this,ReminderAddActivity::class.java)
             startActivity(intent)
         }
-        //checking for recieved intents
-
-        val title = intent.getStringExtra("titlei")
-        if (title != null) {
-            Log.d("Title recieved", title)
-        }
 
         //recycler view is setted up
         setUpReminderRecyclerView()
@@ -70,6 +64,16 @@ class MainActivity : AppCompatActivity() {
         //swipe to delete functionality
         swipeRightToDelete()
 
+        //checking for recieved intents
+        if(intent!=null)
+        {
+            Log.d("time",intent.getIntExtra("time",0).toString())
+            reminderViewModel.delete(
+                Reminder(
+                    intent.getStringExtra("title").toString(),intent.getStringExtra("desc").toString(),
+                    intent.getStringExtra("minute").toString(),intent.getStringExtra("hour").toString(),intent.getStringExtra("day").toString(),
+                    intent.getStringExtra("month").toString(), intent.getStringExtra("year").toString(),intent.getIntExtra("time",0)))
+        }
     }
 
     //not used

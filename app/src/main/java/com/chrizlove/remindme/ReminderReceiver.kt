@@ -12,14 +12,22 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModelProvider
 
 class ReminderReceiver : BroadcastReceiver() {
-    private lateinit var reminderViewModel: ReminderViewModel
     override fun onReceive(context: Context?, intent: Intent?) {
 
         val i = Intent(context, MainActivity::class.java)
-        val intentTitle = intent?.getStringExtra("title")
-            i.putExtra("titlei",intentTitle)
+            i.putExtra("title",intent?.getStringExtra("title"))
+            i.putExtra("desc",intent?.getStringExtra("desc"))
+            i.putExtra("minute",intent?.getStringExtra("minute"))
+            i.putExtra("hour",intent?.getStringExtra("hour"))
+            i.putExtra("day",intent?.getStringExtra("day"))
+            i.putExtra("month",intent?.getStringExtra("month"))
+            i.putExtra("year",intent?.getStringExtra("year"))
+            i.putExtra("time",intent?.getIntExtra("time",0))
+            i.addFlags(
+                Intent.FLAG_ACTIVITY_NEW_TASK or
+                        Intent.FLAG_ACTIVITY_SINGLE_TOP)
         intent!!.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        val pendingIntent = PendingIntent.getActivity(context,0,i,0)
+        val pendingIntent = PendingIntent.getActivity(context,0,i,PendingIntent.FLAG_UPDATE_CURRENT)
 
         val notificationBuilder = NotificationCompat.Builder(context!!,"Chrizlove")
             .setSmallIcon(R.drawable.ic_baseline_notifications_active_24)
